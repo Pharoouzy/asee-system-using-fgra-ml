@@ -1,0 +1,9 @@
+# General settings
+data_paths:
+  raw: data/raw/raw.csv
+  interim: data/interim/interim.csv
+  processed: data/processed/processed.csv
+
+api_settings:
+  host: localhost
+  port: 5000

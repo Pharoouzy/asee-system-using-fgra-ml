@@ -1,0 +1,11 @@
+model1:
+  type: LinearRegression
+  hyperparameters:
+    fit_intercept: True
+    normalize: False
+
+model2:
+  type: RandomForest
+  hyperparameters:
+    n_estimators: 100
+    max_depth: 10

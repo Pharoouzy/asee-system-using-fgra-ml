@@ -1,0 +1,29 @@
+version: "3.8"
+name: agile-software-effort-estimation-system
+services:
+  api:
+    build:
+      context: ../
+      dockerfile: ./docker/flask/Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      # - msc-app-base-volume:/usr/local/lib/python3.8/site-packages:nocopy
+      - ..:/app
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_APP=src/api
+      - FLASK_ENV=development
+
+  notebook:
+    build:
+      context: ../
+      dockerfile: ./docker/jupyter/Dockerfile
+    ports:
+      - "8888:8888"
+    volumes:
+      # - msc-app-base-volume:/usr/local/lib/python3.8/site-packages:nocopy
+      - ../notebooks:/home/umar/notebooks
+# volumes:
+#   msc-app-base-volume:
+#     external: true
