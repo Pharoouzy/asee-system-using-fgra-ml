@@ -1,29 +1,59 @@
 version: "3.8"
 name: agile-software-effort-estimation-system
 services:
+  app:
+    build:
+      context: ../
+      dockerfile: ./docker/images/app/Dockerfile
+    volumes:
+      - ..:/app
+    depends_on:
+      - mysql
+    networks:
+      - app_network
+
   api:
     build:
       context: ../
-      dockerfile: ./docker/flask/Dockerfile
+      dockerfile: ./docker/images/fastapi/Dockerfile
     ports:
-      - "5000:5000"
+      - "8000:8000"
     volumes:
-      # - msc-app-base-volume:/usr/local/lib/python3.8/site-packages:nocopy
       - ..:/app
-    environment:
-      - FLASK_DEBUG=1
-      - FLASK_APP=src/api
-      - FLASK_ENV=development
+    depends_on:
+      - app
+    networks:
+      - app_network
 
-  notebook:
+  jupyter:
     build:
       context: ../
-      dockerfile: ./docker/jupyter/Dockerfile
+      dockerfile: ./docker/images/jupyter/Dockerfile
     ports:
       - "8888:8888"
     volumes:
-      # - msc-app-base-volume:/usr/local/lib/python3.8/site-packages:nocopy
-      - ../notebooks:/home/umar/notebooks
-# volumes:
-#   msc-app-base-volume:
-#     external: true
+      - ../:/home/jovyan/project
+    depends_on:
+      - app
+    networks:
+      - app_network
+
+  mysql:
+    image: mariadb:10.9.4
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local

@@ -1,4 +1,9 @@
+python-dotenv
 scikit-learn
 pandas
-flask
+fastapi
+uvicorn
 pytest
+jupyter_contrib_nbextensions
+pymysql
+sqlalchemy
