@@ -4,6 +4,7 @@ from src.utils.logger import logger
 import os
 from sqlalchemy import create_engine
 import pandas as pd
+from pathlib import Path
 from dotenv import load_dotenv
 from src.utils import configs
 
@@ -16,43 +17,30 @@ DATABASE = os.environ.get('MYSQL_DATABASE')
 
 DATABASE_URI = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}"
 
-query = '''SELECT i.ID,
-    i.Jira_ID,
-    i.Issue_Key,
-    i.Title,
-    i.Description,
-    i.Type,
-    i.Priority,
-    i.Status,
-    i.Resolution,
-    i.Creation_Date,
-    i.Estimation_Date,
-    i.Resolution_Date,
-    i.Last_Updated,
-    i.Story_Point,
-    i.Story_Point_Changed_After_Estimation,
-    i.Timespent,
-    i.Resolution_Time_Minutes,
-    i.Total_Effort_Minutes,
-    i.Title_Changed_After_Estimation,
-    i.Description_Changed_After_Estimation,
-    i.Assignee_ID,
-    i.Creator_ID,
-    i.Reporter_ID,
+query = '''
+SELECT 
+    i.*,
     r.Name Repository_Name,
     p.Name Poject_Name
 FROM Issue i
-    JOIN Project p ON i.Project_ID = p.ID
-    JOIN Repository r ON p.Repository_ID = r.ID;'''
+JOIN Project p 
+ON i.Project_ID = p.ID
+JOIN Repository r 
+ON p.Repository_ID = r.ID;
+'''
 
 class DataIngestion:
     PROJECT_ROOT_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
     def __init__(self):
         self.raw_data_path: str = os.path.join(DataIngestion.PROJECT_ROOT_DIR, configs.general_configs()['data_paths']['raw'])
 
-    def ingest(self):
+    def ingest(self, reload: bool = False) -> str:
         logger.info("Started data ingestion process...")
         try:
+            if Path(self.raw_data_path).exists() and not reload:
+                logger.info(f"Data already ingested to CSV: {self.raw_data_path}")
+                return self.raw_data_path
+
             with create_engine(DATABASE_URI).connect() as connection:
                 chunk_size = 800000
                 chunks = pd.read_sql(query, connection, chunksize=chunk_size)
