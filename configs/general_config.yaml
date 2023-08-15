@@ -4,6 +4,9 @@ data_paths:
   interim: data/interim/interim.csv
   processed: data/processed/processed.csv
 
+artifact_paths:
+  model: artifacts/models/model.plk
+
 api_settings:
   host: localhost
   port: 5000
