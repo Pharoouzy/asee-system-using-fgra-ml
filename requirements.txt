@@ -16,3 +16,4 @@ numpy
 tensorflow
 joblib
 keras
+statsmodels

@@ -1,10 +1,21 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 import seaborn as sns
+from matplotlib.ticker import FuncFormatter
 
-def plot_feature_distribution(df, feature_name):
-    plt.figure(figsize=(10,5))
-    sns.distplot(df[feature_name], kde=True, bins=30)
-    plt.title(f'Distribution of {feature_name}')
+def plot_feature_distribution(data: pd.DataFrame, feature: dict, palette: str = 'deep'):
+    # Set style
+    sns.set_style("whitegrid")
+
+    plt.figure(figsize=(12, 6))
+    sns.countplot(data=data, x=feature['name'], order=data[feature['name']].value_counts().index, palette=palette)
+    plt.title(f"Distribution of {feature['name']}")
+    plt.ylabel('Number of Issues')
+    plt.xlabel(feature['label'])
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(yaxis_formatter))
+
     plt.show()
 
 def plot_categorical_distribution(df, feature_name):
@@ -32,3 +43,35 @@ def plot_boxplot(df, feature_name):
     sns.boxplot(data=df, x=feature_name)
     plt.title(f'Boxplot of {feature_name}')
     plt.show()
+
+def plot_boxplot_for_outliers(data: pd.DataFrame, columns: list, title: str, remove_empty_subplots: bool = False):
+    fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(15, 10))
+    fig.suptitle(title, fontsize=16)
+
+    for i, col in enumerate(columns):
+        sns.boxplot(x=data[col], ax=axes[i // 2, i % 2], color='teal')
+        axes[i // 2, i % 2].set_title(col)
+        axes[i // 2, i % 2].set_xlabel('')
+
+    # Remove empty subplot
+    if remove_empty_subplots:
+        fig.delaxes(axes[1, 1])
+
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    plt.show()
+def plot_non_missing_story_points_distribution(data: pd.DataFrame):
+    # Plot distribution of story points for non-missing values
+    plt.figure(figsize=(12, 6))
+    sns.histplot(data[data['Story_Point'].notna()]['Story_Point'], kde=True, bins=30, color='purple')
+    plt.title('Distribution of Story Points (Non-Missing Values)')
+    plt.xlabel('Story Points')
+    plt.ylabel('Frequency')
+    plt.tight_layout()
+
+    plt.show()
+def save_fig(fig, fig_name):
+    plt.savefig(fig_name, bbox_inches='tight')
+    plt.close()
+
+def yaxis_formatter(x, _):
+    return '{:,.0f}'.format(x)

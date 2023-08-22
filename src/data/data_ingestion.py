@@ -18,15 +18,33 @@ DATABASE = os.environ.get('MYSQL_DATABASE')
 DATABASE_URI = f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOST}/{DATABASE}"
 
 query = '''
-SELECT 
-    i.*,
-    r.Name Repository_Name,
-    p.Name Poject_Name
-FROM Issue i
-JOIN Project p 
-ON i.Project_ID = p.ID
-JOIN Repository r 
-ON p.Repository_ID = r.ID;
+SELECT
+    Issue_Key,
+    Jira_ID,
+    Title,
+    Description,
+    Type,
+    Priority,
+    Status,
+    Resolution,
+    Story_Point,
+    Story_Point_Changed_After_Estimation,
+    Timespent,
+    Resolution_Time_Minutes,
+    In_Progress_Minutes,
+    Total_Effort_Minutes,
+    Title_Changed_After_Estimation,
+    Description_Changed_After_Estimation,
+    Assignee_ID,
+    Creator_ID,
+    Reporter_ID,
+    Project_ID,
+    Sprint_ID,
+    Creation_Date,
+    Estimation_Date,
+    Resolution_Date,
+    Last_Updated
+FROM Issue;
 '''
 
 class DataIngestion:
