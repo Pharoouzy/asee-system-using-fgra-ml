@@ -75,3 +75,28 @@ def save_fig(fig, fig_name):
 
 def yaxis_formatter(x, _):
     return '{:,.0f}'.format(x)
+
+def plot_(y_test, y_pred):
+    # Scatter plot of Actual vs. Predicted values
+    plt.figure(figsize=(14, 6))
+
+    plt.subplot(1, 2, 1)
+    sns.scatterplot(y_test, y_pred, alpha=0.5)
+    plt.plot([y.min(), y.max()], [y.min(), y.max()], '--', lw=2, color='red')
+    plt.xlabel('Actual Story Points')
+    plt.ylabel('Predicted Story Points')
+    plt.title('Actual vs. Predicted Story Points')
+    plt.grid(True)
+
+    # Residual Plot
+    plt.subplot(1, 2, 2)
+    residuals = y_test - y_pred
+    sns.scatterplot(y_test, residuals, alpha=0.5)
+    plt.axhline(0, linestyle='--', lw=2, color='red')
+    plt.xlabel('Actual Story Points')
+    plt.ylabel('Residuals')
+    plt.title('Residual Plot')
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.show()
