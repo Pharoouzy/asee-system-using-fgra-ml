@@ -27,7 +27,8 @@ def train_ann_model(X_train, y_train, X_test, y_test):
     ann_model.compile(optimizer=Adam(learning_rate=0.001), loss='mean_squared_error')
 
     # Train the model
-    history = ann_model.fit(X_train, y_train, epochs=100, batch_size=32, validation_data=(X_test, y_test), verbose=1)
+    history = ann_model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.2, verbose=1)
+    # history = ann_model.fit(X_train, y_train, epochs=100, batch_size=32, validation_data=(X_test, y_test), verbose=1)
 
     # Predictions
-    return ann_model.predict(X_test).flatten()
+    return ann_model.predict(X_test).flatten(), history

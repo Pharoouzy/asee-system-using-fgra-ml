@@ -12,14 +12,9 @@ def missing_value_statistics(data: pd.DataFrame) -> pd.DataFrame:
 
 def log_transform_outliers(data: pd.DataFrame, columns: list) -> pd.DataFrame:
     for column in columns:
-        # Add a small constant to ensure all values are positive
-        data[column] = data[column] + 1
+        data[column] = np.log(data[column] + 1)
 
-        # Apply logarithmic transformation
-        data[column] = np.log(data[column])
-        data[column] = np.log(data[column])
-
-        return data
+    return data
 def save_processed_data(data: pd.DataFrame, filename: str) -> None:
     data.to_csv(filename, index=False)
 
@@ -32,7 +27,7 @@ def remove_duplicates(data: pd.DataFrame) -> None:
 
     # Check how many duplicate rows were removed
     removed_duplicates = initial_length - len(data)
-    print(f'Duplicate rows: {removed_duplicates}')
+    print(f'Duplicate rows removed: {removed_duplicates}')
 
 def identify_outliers(data: pd.DataFrame, columns: list) -> dict:
     outliers_stats = {}

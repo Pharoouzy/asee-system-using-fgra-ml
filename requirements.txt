@@ -18,3 +18,4 @@ joblib
 keras
 statsmodels
 category_encoders
+scikit-fuzzy

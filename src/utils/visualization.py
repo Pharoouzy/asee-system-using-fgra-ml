@@ -18,8 +18,25 @@ def plot_feature_distribution(data: pd.DataFrame, feature: dict, palette: str = 
 
     plt.show()
 
+def plot_feature_binned_distribution(data: pd.DataFrame, feature: dict, palette: str = 'deep'):
+    sns.set_style("whitegrid")
+
+    plt.figure(figsize=(12, 6))
+    bins = [0, 1, 2, 5, 8, 13, 21, max(data[feature['name']]) + 1]
+    labels = ['1', '2', '3-5', '6-8', '9-13', '14-21', '22+']
+    binned = pd.cut(data[feature['name']], bins=bins, labels=labels, right=False)
+    binned_counts = binned.value_counts().sort_index()
+    binned_counts.plot(kind='bar', color='blue', alpha=0.5)
+    plt.title(f"Distribution of {feature['name']}")
+    plt.xlabel(f"{feature['name']} Ranges")
+    plt.ylabel('Frequency')
+    plt.tight_layout()
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(yaxis_formatter))
+
+    plt.show()
+
 def plot_categorical_distribution(df, feature_name):
-    plt.figure(figsize=(10,5))
+    plt.figure(figsize=(10, 5))
     sns.countplot(data=df, x=feature_name, order=df[feature_name].value_counts().index)
     plt.title(f'Distribution of {feature_name}')
     plt.xticks(rotation=45)
@@ -38,10 +55,12 @@ def plot_correlation_matrix(df):
     plt.title('Correlation Matrix')
     plt.show()
 
-def plot_boxplot(df, feature_name):
-    plt.figure(figsize=(10,5))
-    sns.boxplot(data=df, x=feature_name)
-    plt.title(f'Boxplot of {feature_name}')
+def plot_boxplot(data: pd.DataFrame, feature: str, title: str = 'Boxplot'):
+    plt.figure(figsize=(10, 5))
+    sns.boxplot(data=data, x=feature)
+    plt.title(title)
+    plt.tight_layout()
+
     plt.show()
 
 def plot_boxplot_for_outliers(data: pd.DataFrame, columns: list, title: str, remove_empty_subplots: bool = False):
@@ -76,7 +95,7 @@ def save_fig(fig, fig_name):
 def yaxis_formatter(x, _):
     return '{:,.0f}'.format(x)
 
-def plot_(y_test, y_pred):
+def plot_actual_vs_predictedx(y_test, y_pred):
     # Scatter plot of Actual vs. Predicted values
     plt.figure(figsize=(14, 6))
 
@@ -88,6 +107,10 @@ def plot_(y_test, y_pred):
     plt.title('Actual vs. Predicted Story Points')
     plt.grid(True)
 
+    plt.tight_layout()
+    plt.show()
+
+def plot_residualx(y_test, y_pred):
     # Residual Plot
     plt.subplot(1, 2, 2)
     residuals = y_test - y_pred
@@ -99,4 +122,42 @@ def plot_(y_test, y_pred):
     plt.grid(True)
 
     plt.tight_layout()
+    plt.show()
+
+def plot_actual_vs_predicted(y_test, y_pred, model_name='', title='Actual vs. Predicted', xlabel='Actual Values', ylabel='Predicted Values'):
+    # If model_name is provided, append it to the title
+    full_title = f"{title} for {model_name}" if model_name else title
+
+    plt.figure(figsize=(10, 6))
+    plt.scatter(y_test, y_pred, alpha=0.5)
+    plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red')  # Diagonal line
+    plt.title(full_title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+def plot_residual(y_test, y_pred, model_name='', title='Residual Plot', xlabel='Predicted Values', ylabel='Residuals'):
+    # Calculate residuals
+    residuals = y_test - y_pred
+
+    # If model_name is provided, append it to the title
+    full_title = f"{title} for {model_name}" if model_name else title
+
+    plt.figure(figsize=(10, 6))
+    plt.scatter(y_pred, residuals, alpha=0.5)
+    plt.axhline(y=0, color='red', linestyle='--')  # Horizontal line at y=0 for reference
+    plt.title(full_title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+def plot_neural_network_training_history(history, model_name):
+    plt.plot(history.history['loss'], label='Training Loss')
+    plt.plot(history.history['val_loss'], label='Validation Loss')
+    plt.legend()
+    plt.title(f'Training and Validation Loss for {model_name}')
     plt.show()

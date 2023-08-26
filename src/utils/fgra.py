@@ -1,5 +1,45 @@
 import numpy as np
 import pandas as pd
+import skfuzzy as fuzz
+
+def fgra(X, y):
+    # Normalize data to 0-1 range
+    X_norm = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
+
+    # Calculate grey relational coefficients
+    coefs = grey_relational.grey_relational_coef(X_norm, X_norm)
+
+    # Calculate grey relational grades
+    grades = grey_relational.grey_relational_grade(coefs)
+
+    # Rank features by grey relational grade
+    ranking = grades.mean(axis=0).argsort()[::-1]
+
+    print("Feature ranking:", ranking)
+
+def fuzzyfication(data):
+    # Define fuzzy membership functions.
+    # Here, we use Gaussian membership function as an example.
+    mfunc = fuzz.membership.gaussmf(data, np.mean(data), np.std(data))
+    return mfunc
+
+def rank_features(data, target):
+    fuzzy_data = fuzzyfication(data)
+    coefficients = grey_relational_coefficient(fuzzy_data, target)
+
+    # Rank features based on coefficients
+    ranked_features = np.argsort(-coefficients)
+    return ranked_features
+
+
+def grey_relational_coefficient(fuzzy_data, target):
+    # Compute the difference between each fuzzy data point and the target
+    delta = np.abs(fuzzy_data - target)
+
+    # Compute the grey relational coefficient
+    coef = (np.min(delta) + np.min(delta) * 0.5) / (delta + np.min(delta) * 0.5)
+    return coef
+
 
 def advanced_normalization(X):
     """

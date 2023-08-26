@@ -1,2 +1,4 @@
-def persist_model(model, model_path):
-    return None
+import joblib
+
+def save_model(model, filepath):
+    joblib.dump(model, filepath)
