@@ -4,26 +4,39 @@ from fastapi import APIRouter, HTTPException
 from src.api.models.story_model import StoryModel
 from datetime import datetime
 from src.utils import configs
+from joblib import load
 
-# model = load_trained_model()
+model = load(configs.general_configs()['artifact_paths']['model'])
 
 router = APIRouter()
 
 @router.post('/estimate')
 async def estimate(data: StoryModel):
     try:
-        # TODO: Add the feature names to estimate from the model
-        # features = [data.feature_name1, data.feature_name2, ...]  # Add all the feature names
-        # prediction = model.predict([features])
-        # return {'status': 'success', 'data': prediction[0] }
         current_timestamp = datetime.now().isoformat()
-        return {
-            'status': 'success',
-            'message': 'Effort estimation successful',
-            'timestamp': current_timestamp,
-            'model_version': '1.0.0',
-            'data': { 'estimated_effort': 12.5 },
-        }
+        if model:
+            features = [data.title, data.description, data.status, data.priority]  # Add all the feature names
+            prediction = model.predict([features])
+            if not prediction:
+                raise HTTPException(status_code=400, detail='Could not estimate story point.')
+
+            response = {
+                'status': 'success',
+                'message': 'Effort estimation successful',
+                'timestamp': current_timestamp,
+                'model_version': '1.0.0',
+                'data': int(prediction[0])
+            }
+        else:
+            response =  {
+                'status': 'success',
+                'message': 'Effort estimation successful [test]',
+                'timestamp': current_timestamp,
+                'model_version': '1.0.0',
+                'data': { 'estimated_effort': 12.5 },
+            }
+
+        return response
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

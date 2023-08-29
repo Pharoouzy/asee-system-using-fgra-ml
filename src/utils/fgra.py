@@ -2,21 +2,6 @@ import numpy as np
 import pandas as pd
 import skfuzzy as fuzz
 
-def fgra(X, y):
-    # Normalize data to 0-1 range
-    X_norm = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
-
-    # Calculate grey relational coefficients
-    coefs = grey_relational.grey_relational_coef(X_norm, X_norm)
-
-    # Calculate grey relational grades
-    grades = grey_relational.grey_relational_grade(coefs)
-
-    # Rank features by grey relational grade
-    ranking = grades.mean(axis=0).argsort()[::-1]
-
-    print("Feature ranking:", ranking)
-
 def fuzzyfication(data):
     # Define fuzzy membership functions.
     # Here, we use Gaussian membership function as an example.
@@ -32,7 +17,15 @@ def rank_features(data, target):
     return ranked_features
 
 
-def grey_relational_coefficient(fuzzy_data, target):
+def grey_relational_coefficient(series, ref, rho=0.5):
+    # rho is a distinguishing coefficient typically set between [0, 1]
+    delta = abs(series - ref)
+    max_delta = delta.max()
+    min_delta = delta.min()
+
+    return (min_delta + rho * max_delta) / (delta + rho * max_delta)
+
+def grey_relational_coefficientz(fuzzy_data, target):
     # Compute the difference between each fuzzy data point and the target
     delta = np.abs(fuzzy_data - target)
 
@@ -40,27 +33,8 @@ def grey_relational_coefficient(fuzzy_data, target):
     coef = (np.min(delta) + np.min(delta) * 0.5) / (delta + np.min(delta) * 0.5)
     return coef
 
-
-def advanced_normalization(X):
-    """
-    Normalize the data to the range [0, 1]. If a feature/column has zero variance (i.e., max = min),
-    set it to 0.5 (midway between 0 and 1) as it doesn't provide any informative power.
-    """
-    X_min = np.min(X, axis=0)
-    X_max = np.max(X, axis=0)
-    X_range = X_max - X_min
-
-    # Identify columns with zero variance and set their range to 1 to avoid division by zero.
-    zero_variance_cols = X_range == 0
-    X_range[zero_variance_cols] = 1
-
-    normalized_X = (X - X_min) / X_range
-
-    # Set columns with zero variance to 0.5
-    normalized_X[:, zero_variance_cols] = 0.5
-    return normalized_X
-
-def normalize_data(data: pd.DataFrame, target_col: str):
+def normalize_data(data: pd.DataFrame, target_col: str = ''):
+    return (data - data.min()) / (data.max() - data.min())
     # Exclude date columns for GRA
     data_for_gra = data.select_dtypes(include=[float, int])
 
@@ -83,7 +57,7 @@ def compute_grey_relational_coefficients(data, target_col, zeta=0.5):
 
     return coefficients
 
-def rank_features(coefficients: pd.DataFrame):
+def rank_featuresx(coefficients: pd.DataFrame):
     # 4. Rank the Features based on average coefficient
     ranked_features = coefficients.mean().sort_values(ascending=False)
 
@@ -121,3 +95,33 @@ def grey_relational_analysis(data, target_col, zeta=0.5):
     ranked_features = coefficients.mean().sort_values(ascending=False)
 
     return ranked_features
+
+
+# # from src.utils.fgra import rank_features
+# #
+# # ranked_features = rank_features(numeric_data.drop(columns=['Story_Point']), numeric_data['Story_Point'])
+# # print(ranked_features)
+#
+# def c_grey_relational_coefficient(data, ref_seq, rho=0.5):
+#     """
+#     Compute the Grey Relational Coefficient for data against a reference sequence.
+#     """
+#     min_diff = np.min(np.abs(data - ref_seq))
+#     max_diff = np.max(np.abs(data - ref_seq))
+#     GRC = (min_diff + rho * max_diff) / (np.abs(data - ref_seq) + rho * max_diff)
+#     return GRC
+#
+# # Normalize the data
+# normalized_data = (numeric_data - numeric_data.min()) / (numeric_data.max() - numeric_data.min())
+# ref_seq = normalized_data['Story_Point'].values
+#
+# # Calculate Grey Relational Coefficients for each feature
+# grc_values = {}
+# for column in normalized_data.columns:
+#     if column != 'Story_Point':
+#         grc_values[column] = np.mean(c_grey_relational_coefficient(normalized_data[column].values, ref_seq))
+#
+# # Sort features by Grey Relational Grade
+# sorted_grc_values = dict(sorted(grc_values.items(), key=lambda item: item[1], reverse=True))
+# # print(sorted(grc_values.items(), key=lambda item: item[1], reverse=True))
+# sorted_grc_values

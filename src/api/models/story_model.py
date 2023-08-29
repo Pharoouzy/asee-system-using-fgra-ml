@@ -1,12 +1,10 @@
 from pydantic import BaseModel#, field_validator
 
 class StoryModel(BaseModel):
-    story_type: str
-    story_status: str
-    complexity: str
-    work_days: float
-    resources: float
-    # ... Add all the other feature names and types
+    title: str
+    description: str
+    status: str
+    priority: str
 
     # TODO: Add validation for story model
     # @field_validator('story_type')

@@ -5,7 +5,7 @@ data_paths:
   processed: data/processed/processed.csv
 
 artifact_paths:
-  model: artifacts/models/model.pkl
+  model: artifacts/models/model.joblib
 
 api_settings:
   host: localhost
