@@ -15,7 +15,12 @@ async def estimate(data: StoryModel):
     try:
         current_timestamp = datetime.now().isoformat()
         if model:
-            features = [data.title, data.description, data.status, data.priority]  # Add all the feature names
+            features = [
+                data.Description,
+                data.Title,
+                data.Sprint_ID,
+                data.Status,
+            ]
             prediction = model.predict([features])
             if not prediction:
                 raise HTTPException(status_code=400, detail='Could not estimate story point.')
@@ -25,7 +30,7 @@ async def estimate(data: StoryModel):
                 'message': 'Effort estimation successful',
                 'timestamp': current_timestamp,
                 'model_version': '1.0.0',
-                'data': int(prediction[0])
+                'data': (prediction[0])
             }
         else:
             response =  {
@@ -38,7 +43,7 @@ async def estimate(data: StoryModel):
 
         return response
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 
 def load_trained_model() -> object:
     try:

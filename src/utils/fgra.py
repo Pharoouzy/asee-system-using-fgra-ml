@@ -4,7 +4,6 @@ import skfuzzy as fuzz
 
 def fuzzyfication(data):
     # Define fuzzy membership functions.
-    # Here, we use Gaussian membership function as an example.
     mfunc = fuzz.membership.gaussmf(data, np.mean(data), np.std(data))
     return mfunc
 
@@ -33,7 +32,7 @@ def grey_relational_coefficientz(fuzzy_data, target):
     coef = (np.min(delta) + np.min(delta) * 0.5) / (delta + np.min(delta) * 0.5)
     return coef
 
-def normalize_data(data: pd.DataFrame, target_col: str = ''):
+def normalize_data(data: pd.DataFrame):
     return (data - data.min()) / (data.max() - data.min())
     # Exclude date columns for GRA
     data_for_gra = data.select_dtypes(include=[float, int])

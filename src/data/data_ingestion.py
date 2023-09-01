@@ -51,4 +51,4 @@ def ingest_raw_data(reload: bool = False) -> str:
         raise CustomException(e, sys)
 
 def chuck_to_csv(path: str, chunk: pd.DataFrame, mode: str = 'a') -> None:
-    chunk.to_csv(path, mode=mode, index=False, header=mode == 'w', quoting=csv.QUOTE_MINIMAL, escapechar='\\')
+    chunk.to_csv(path, mode=mode, index=False, header=mode == 'w', escapechar='\\')

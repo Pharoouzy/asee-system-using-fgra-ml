@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
@@ -54,6 +55,36 @@ def identify_outliers(data: pd.DataFrame, columns: list) -> dict:
 
     return outliers_stats
 
+def remove_outliers_with_iqr(data: pd.DataFrame) -> pd.DataFrame:
+    # Calculating the IQR for Story_Point
+    Q1 = data['Story_Point'].quantile(0.25)
+    Q3 = data['Story_Point'].quantile(0.75)
+    IQR = Q3 - Q1
+
+    # Defining bounds for outliers
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+
+    # Filtering out the outliers
+    data_with_no_outliers = data[(data['Story_Point'] >= lower_bound) & (data['Story_Point'] <= upper_bound)]
+
+    return data_with_no_outliers
+
+def remove_outlier_with_cap_floor(data: pd.DataFrame) -> pd.DataFrame:
+    # Calculate Q1, Q3, and IQR
+    Q1 = data['Story_Point'].quantile(0.25)
+    Q3 = data['Story_Point'].quantile(0.75)
+    IQR = Q3 - Q1
+
+    # Define bounds
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+
+    # Cap and Floor outliers
+    data['Story_Point'] = data['Story_Point'].clip(lower=lower_bound, upper=upper_bound)
+
+    return data
+
 def assess_unique_values(data: pd.DataFrame, columns: list) -> pd.DataFrame:
     # Check the number of unique values in potential categorical columns
     unique_values = data[columns].nunique()
@@ -70,3 +101,8 @@ def encode_labels(data: pd.DataFrame, columns_to_encode: list) -> dict:
         label_encoders[col] = le  # store the encoder for potential use later
 
     return encoded_data
+
+def save_processed_data(processed_data: pd.DataFrame) -> None:
+    PROJECT_ROOT_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
+    data_path = os.path.join(PROJECT_ROOT_DIR, 'data/processed/processed.csv')
+    processed_data.to_csv(data_path, index=False)

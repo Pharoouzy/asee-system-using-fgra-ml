@@ -109,7 +109,7 @@ def plot_neural_network_training_history(history, model_name):
     plt.plot(history.history['loss'], label='Training Loss')
     plt.plot(history.history['val_loss'], label='Validation Loss')
     plt.legend()
-    plt.title()
+    plt.title(title)
     plt.tight_layout()
     save_fig(plt, title)
     plt.show()
