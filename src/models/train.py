@@ -54,6 +54,9 @@ def train_and_evaluate_models(models, X_train, y_train, X_test, y_test, plot_cha
             if len(ann_history) > 0:
                 plot_neural_network_training_history(ann_history['history'], ann_history['name'])
         results[model_name] = trained_model
+        print()
+        print('====================================')
+        print()
     return results
 
 def visualise(model_results: dict, y_test):

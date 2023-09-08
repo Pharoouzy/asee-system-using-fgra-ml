@@ -155,4 +155,5 @@ cython_debug/
 
 data/**/*.csv
 data/**/*.sql
-artifacts/
+
+artifacts/models/*.joblib
