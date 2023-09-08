@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
+from src.utils.logger import logger
 
 def missing_value_statistics(data: pd.DataFrame) -> pd.DataFrame:
     # Identify columns with missing values and their respective percentages
@@ -106,3 +107,4 @@ def save_processed_data(processed_data: pd.DataFrame) -> None:
     PROJECT_ROOT_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..')
     data_path = os.path.join(PROJECT_ROOT_DIR, 'data/processed/processed.csv')
     processed_data.to_csv(data_path, index=False)
+    logger.info(f"Data successfully saved to CSV: {data_path}")
