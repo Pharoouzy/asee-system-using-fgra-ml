@@ -9,13 +9,11 @@ pymysql
 sqlalchemy
 pydantic
 PyYAML
-Flask
 matplotlib
 seaborn
 numpy
 tensorflow
 joblib
 keras
-statsmodels
 category_encoders
 scikit-fuzzy
